@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input e Pulsante Centrati</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js/dist/umd/supabase.js"></script>
+    <script>
+        const supabaseUrl = 'https://ynhkotyjswvzbjsnowfj.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InluaGtvdHlqc3d2emJqc25vd2ZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzODI5MTUsImV4cCI6MjA3OTk1ODkxNX0.MxOcQm91FKmyFbDrJddaqjeacFGYvW_B_nPfoAskr9A';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function insertData(criterio, proponente, ts_ricezione) 
+        {
+            const { data, error } = await supabase
+                .from('CRITERIO')
+                .insert([
+                    { 
+                         
+                        DS_CRITERIO: criterio, 
+                        PROPONENTE: proponente, 
+                        TS_RICEZIONE: ts_ricezione 
+                    }
+                ]);
+
+            if (error) {
+                console.error('Errore durante l\'inserimento dei dati:', error);
+            } else {
+                console.log('Dati inseriti con successo:', data);
+                alert("Criterio inviato con successo!");
+            }
+        }
+
+        function mandaCriterio()
+        {
+            let criterio = document.getElementById("sendCriterio").value;
+            let proponente = document.getElementById("sendProponente").value;
+            insertData(criterio,proponente,new Date().toISOString());
+            fetchData();
+        }
+
+
+
+let criteriPresenti;
+async function fetchData() 
+            {
+                let { data, error } = await supabase
+                    .from('CRITERIO') 
+                    .select('*');
+
+                if (error) {
+                    console.error(error);
+                } else {
+                    console.log(data);
+                    criteriPresenti=data;
+                    
+                }
+                generateHtml(criteriPresenti);
+            }
+function generateHtml(jsonArray) 
+{
+    const container = document.getElementById('criteriPresenti'); // Nuovo nome generico
+    container.innerHTML=""; //lo svuoto!
+    jsonArray.forEach(item => {
+        // Crea l'elemento della barra
+        const criterioDiv = document.createElement('div');
+        criterioDiv.className = 'generic-bar'; // Classe generica
+
+        // Crea un contenitore per la tabella
+        const tableContainer = document.createElement('div');
+        tableContainer.className = 'table-container'; // Non nascondiamo la tabella
+
+        // Crea la tabella
+        const table = document.createElement('table');
+        table.innerHTML = `
+
+            <tr>
+            <td >Criterio:      </td><td><b>${item.DS_CRITERIO} </b></td>
+            <td >Proposto da:   </td><td><b>${item.PROPONENTE}  </b></td>
+            <td >Il:            </td><td><b>${item.TS_RICEZIONE}</b></td>
+            </tr>
+        `;
+
+        // Aggiunge la tabella al contenitore
+        tableContainer.appendChild(table);
+
+        criterioDiv.appendChild(tableContainer);
+
+        // Aggiunge la barra all'elemento principale
+        container.appendChild(criterioDiv);
+    });
+}
+fetchData();
+    </script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0; /* Colore di sfondo chiaro */
+            font-family: Segoe UI;
+            flex-direction: column; /* Cambia l'orientamento a colonna */
+        }
+
+        .container {
+            text-align: center;
+            background-color: #ffffff; /* Colore di sfondo del contenitore */
+            padding: 20px;
+            border-radius: 8px; /* Angoli arrotondati */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombra leggera */
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 300px; /* Larghezza dell'input */
+            border: 1px solid #c0c0c0; /* Bordo grigio */
+            border-radius: 4px; /* Angoli arrotondati per l'input */
+            margin-bottom: 10px; /* Spazio sotto l'input */
+        }
+
+        button {
+            padding: 10px 20px; /* Padding verticale ed orizzontale */
+            border: none;
+            border-radius: 4px; /* Angoli arrotondati per il pulsante */
+            background-color: #FFD700; /* Colore oro per il pulsante */
+            color: #ffffff; /* Colore del testo del pulsante */
+            cursor: pointer; /* Cambia il cursore al passaggio */
+            font-size: 16px; /* Dimensione del testo */
+        }
+
+        button:hover {
+            background-color: #FFC107; /* Cambio di colore al passaggio */
+        }
+
+        #criteriPresenti
+        {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0; /* Colore di sfondo chiaro */
+            font-family: Segoe UI;
+            flex-direction: column; /* Cambia l'orientamento a colonna */
+            
+        }
+        
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Inserisci il tuo criterio</h2>
+    <table>
+    <tr><td>Criterio</td><td><input id="sendCriterio" type="text" placeholder="Scrivi il criterio che vuoi proporre"></td></tr> 
+    <tr><td>Proponente</td><td><input id="sendProponente" type="text" placeholder="Scrivi il tuo nome e cognome"></td></tr> 
+    </table>
+    <button onclick="mandaCriterio()" type="submit">Invia</button>
+</div>
+<br>
+<div id="criteriPresenti"></div>
+
+</body>
+</html>
