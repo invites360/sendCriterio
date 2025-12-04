@@ -36,8 +36,22 @@
             let criterio = document.getElementById("sendCriterio").value;
             let proponente = document.getElementById("sendProponente").value;
             insertData(criterio,proponente,new Date().toISOString());
+            deleteLongRecords();
             fetchData();
         }
+
+    async function deleteLongRecords() {
+        const { data, error } = await supabase
+            .from('CRITERIO') // Nome della tabella
+            .delete()
+            .gt('length(DS_CRITERIO)', 100); // Condizione di lunghezza
+
+        if (error) {
+            console.error('Errore durante l\'eliminazione:', error);
+        } else {
+            console.log('Record eliminati:', data);
+        }
+    }
 
 
 
@@ -110,6 +124,7 @@ fetchData();
             padding: 20px;
             border-radius: 8px; /* Angoli arrotondati */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombra leggera */
+            width: 100%;
         }
 
         input[type="text"] {
