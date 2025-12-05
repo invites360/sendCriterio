@@ -60,7 +60,8 @@ async function fetchData()
             {
                 let { data, error } = await supabase
                     .from('CRITERIO') 
-                    .select('*');
+                    .select('*')
+                    .order('TS_RICEZIONE', { ascending: false });
 
                 if (error) {
                     console.error(error);
@@ -75,8 +76,7 @@ function generateHtml(jsonArray)
 {
     const container = document.getElementById('criteriPresenti'); // Nuovo nome generico
     container.innerHTML=""; //lo svuoto!
-    jsonArray.forEach(item => {
-        // Crea l'elemento della barra
+            // Crea l'elemento della barra
         const criterioDiv = document.createElement('div');
         criterioDiv.className = 'generic-bar'; // Classe generica
 
@@ -86,12 +86,14 @@ function generateHtml(jsonArray)
 
         // Crea la tabella
         const table = document.createElement('table');
-        table.innerHTML = `
+    jsonArray.forEach(item => {
+
+        table.innerHTML += `
 
             <tr>
-            <td >Criterio:      </td><td><b>${item.DS_CRITERIO} </b></td>
-            <td >Proposto da:   </td><td><b>${item.PROPONENTE}  </b></td>
-            <td >Il:            </td><td><b>${item.TS_RICEZIONE}</b></td>
+            <td >Criterio:      </td><td style="text-align:left;"><b>${item.DS_CRITERIO} </b></td>
+            <td >Proposto da:   </td><td style="text-align:left;"><b>${item.PROPONENTE}  </b></td>
+            <td >Il:            </td><td style="text-align:left;"><b>${item.TS_RICEZIONE}</b></td>
             </tr>
         `;
 
