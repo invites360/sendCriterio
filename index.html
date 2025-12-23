@@ -8,11 +8,11 @@
     <script>
         const supabaseUrl = 'https://ynhkotyjswvzbjsnowfj.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InluaGtvdHlqc3d2emJqc25vd2ZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzODI5MTUsImV4cCI6MjA3OTk1ODkxNX0.MxOcQm91FKmyFbDrJddaqjeacFGYvW_B_nPfoAskr9A';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+        const supabaseCl = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         async function insertData(criterio, proponente, ts_ricezione) 
         {
-            const { data, error } = await supabase
+            const { data, error } = await supabaseCl
                 .from('CRITERIO')
                 .insert([
                     { 
@@ -41,7 +41,7 @@
         }
 
     async function deleteLongRecords() {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseCl
             .from('CRITERIO') // Nome della tabella
             .delete()
             .gt('length(DS_CRITERIO)', 100); // Condizione di lunghezza
@@ -58,7 +58,7 @@
 let criteriPresenti;
 async function fetchData() 
             {
-                let { data, error } = await supabase
+                let { data, error } = await supabaseCl
                     .from('CRITERIO') 
                     .select('*')
                     .order('TS_RICEZIONE', { ascending: false });
